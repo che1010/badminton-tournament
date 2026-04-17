@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local env (if you ever add a .env file for API keys)
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+
+# Node (if you add a local dev server)
+node_modules/
+package-lock.json

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShuttleScore — Badminton Tournament Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/css/main.css" />
+</head>
+<body>
+
+  <!-- ── Header ────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">🏸</span>
+        <span class="brand-name">ShuttleScore</span>
+      </div>
+      <div class="header-meta">
+        <span class="live-badge" id="live-badge">● LIVE</span>
+        <span class="clock" id="clock"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Firebase status banner ────────────────────────────────── -->
+  <div class="firebase-banner" id="firebase-banner">
+    <span class="fb-icon">⚡</span>
+    <span id="firebase-status-text">Real-time sync not configured — running in local mode. See <strong>Setup → Firebase</strong> to enable multi-device sync.</span>
+    <button class="fb-dismiss" onclick="document.getElementById('firebase-banner').style.display='none'">✕</button>
+  </div>
+
+  <!-- ── Nav tabs ───────────────────────────────────────────────── -->
+  <nav class="tab-nav">
+    <div class="tab-nav-inner">
+      <button class="nav-tab active" data-tab="courts" onclick="switchTab('courts')">
+        <span class="tab-icon">🏟</span> Courts
+      </button>
+      <button class="nav-tab" data-tab="leaderboard" onclick="switchTab('leaderboard')">
+        <span class="tab-icon">🏆</span> Leaderboard
+      </button>
+      <button class="nav-tab" data-tab="export" onclick="switchTab('export')">
+        <span class="tab-icon">📊</span> Export
+      </button>
+      <button class="nav-tab" data-tab="log" onclick="switchTab('log')">
+        <span class="tab-icon">🤖</span> Agent Log
+      </button>
+      <button class="nav-tab" data-tab="setup" onclick="switchTab('setup')">
+        <span class="tab-icon">⚙️</span> Setup
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Main content ───────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- COURTS VIEW -->
+    <div id="view-courts" class="view active">
+      <div class="view-header">
+        <h1 class="view-title">Active Courts</h1>
+        <button class="btn-primary" onclick="switchTab('setup')">+ Add Court</button>
+      </div>
+      <div class="court-grid" id="court-grid">
+        <div class="empty-state">
+          <div class="empty-icon">🏸</div>
+          <div class="empty-title">No courts yet</div>
+          <div class="empty-sub">Go to Setup to add courts and players</div>
+          <button class="btn-primary" style="margin-top:1.5rem;" onclick="switchTab('setup')">Set up a court</button>
+        </div>
+      </div>
+      <div class="tally-bar" id="tally-bar" style="display:none;">
+        <button class="btn-tally" id="tally-btn" onclick="runTallyAgent()">
+          <span class="tally-icon">🤖</span> Run Tally Agent — Refresh Leaderboard
+        </button>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD VIEW -->
+    <div id="view-leaderboard" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Leaderboard</h1>
+        <button class="btn-secondary" onclick="runTallyAgent()">Refresh</button>
+      </div>
+      <div id="lb-content">
+        <div class="empty-state">
+          <div class="empty-icon">🏆</div>
+          <div class="empty-title">No standings yet</div>
+          <div class="empty-sub">Record some match scores, then run the Tally Agent</div>
+          <button class="btn-primary" style="margin-top:1.5rem;" onclick="switchTab('courts');runTallyAgent()">Run Tally Agent</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT VIEW -->
+    <div id="view-export" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Export Report</h1>
+      </div>
+      <div class="export-panel">
+        <div class="export-desc">
+          Download a complete tournament report with all match scores, game breakdowns, and leaderboard standings.
+          The Excel file contains 3 sheets. The CSV can be imported directly into Google Sheets.
+        </div>
+        <div class="export-actions">
+          <button class="export-btn xlsx" id="xlsx-btn" onclick="exportXLSX()">
+            <span class="export-btn-icon">📗</span>
+            <span>
+              <strong>Download Excel</strong>
+              <small>3 sheets: Leaderboard, Matches, Games</small>
+            </span>
+          </button>
+          <button class="export-btn csv" id="csv-btn" onclick="exportCSV()">
+            <span class="export-btn-icon">📄</span>
+            <span>
+              <strong>Download CSV</strong>
+              <small>Import into Google Sheets</small>
+            </span>
+          </button>
+        </div>
+        <div class="google-sheets-tip">
+          <strong>Google Sheets:</strong> Open <a href="https://sheets.google.com" target="_blank">sheets.google.com</a> → File → Import → Upload the downloaded CSV file.
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <div class="preview-header">
+          <span class="preview-title">Data Preview</span>
+          <div class="sheet-tabs">
+            <button class="sheet-tab active" onclick="showPreview('leaderboard')">Leaderboard</button>
+            <button class="sheet-tab" onclick="showPreview('matches')">Match Results</button>
+            <button class="sheet-tab" onclick="showPreview('games')">Game Scores</button>
+          </div>
+        </div>
+        <div id="preview-area" class="preview-area"></div>
+      </div>
+    </div>
+
+    <!-- AGENT LOG VIEW -->
+    <div id="view-log" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Agent Log</h1>
+        <button class="btn-secondary" onclick="clearLog()">Clear</button>
+      </div>
+      <div class="agent-log-wrap">
+        <div class="agent-log" id="agent-log">
+          <div class="log-entry system">
+            <span class="log-tag">[SYSTEM]</span>
+            <span class="log-time" id="init-time"></span>
+            Agents ready. Add courts in Setup to begin.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETUP VIEW -->
+    <div id="view-setup" class="view">
+      <div class="view-header">
+        <h1 class="view-title">Setup</h1>
+      </div>
+
+      <!-- Add Court -->
+      <section class="setup-section">
+        <h2 class="setup-section-title">Add a Court</h2>
+        <div class="setup-card">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Court name</label>
+              <input class="form-input" id="court-name" placeholder="e.g. Court 1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Format</label>
+              <select class="form-input" id="court-format">
+                <option value="Singles">Singles</option>
+                <option value="Doubles">Doubles</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Team A / Player A</label>
+              <input class="form-input" id="team-a" placeholder="Name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Team B / Player B</label>
+              <input class="form-input" id="team-b" placeholder="Name" />
+            </div>
+          </div>
+          <button class="btn-primary" onclick="addCourt()">Add Court</button>
+        </div>
+      </section>
+
+      <!-- BWF Rules -->
+      <section class="setup-section">
+        <h2 class="setup-section-title">BWF Rules Enforced</h2>
+        <div class="setup-card rules-card">
+          <div class="rule-item"><span class="rule-dot"></span>Rally point scoring — every rally wins a point</div>
+          <div class="rule-item"><span class="rule-dot"></span>21 points to win a game</div>
+          <div class="rule-item"><span class="rule-dot"></span>Must win by 2 points</div>
+          <div class="rule-item"><span class="rule-dot"></span>Deuce at 20–20, continue until 2-point lead</div>
+          <div class="rule-item"><span class="rule-dot"></span>Cap at 30 points (30–29 wins)</div>
+          <div class="rule-item"><span class="rule-dot"></span>Best of 3 games — first to win 2 games wins match</div>
+          <div class="rule-item"><span class="rule-dot"></span>Server changes on every rally</div>
+        </div>
+      </section>
+
+      <!-- Firebase Config -->
+      <section class="setup-section">
+        <h2 class="setup-section-title">⚡ Firebase Real-Time Sync <span class="optional-badge">Optional</span></h2>
+        <div class="setup-card">
+          <p class="setup-note">Enable Firebase to sync scores across multiple devices in real time — perfect for tournaments with recorders on each court.</p>
+          <div class="form-group" style="margin-top:1rem;">
+            <label class="form-label">Firebase Config JSON</label>
+            <textarea class="form-input form-textarea" id="firebase-config" placeholder='Paste your Firebase config here, e.g.:
+{
+  "apiKey": "...",
+  "authDomain": "...",
+  "databaseURL": "...",
+  "projectId": "..."
+}'></textarea>
+          </div>
+          <button class="btn-primary" onclick="initFirebase()">Connect Firebase</button>
+          <div class="firebase-help">
+            <strong>How to get your config:</strong> Go to <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a>
+            → Your project → Project settings → Your apps → SDK setup → Config object.
+            Make sure Realtime Database is enabled.
+          </div>
+        </div>
+      </section>
+
+      <!-- Danger zone -->
+      <section class="setup-section">
+        <h2 class="setup-section-title danger-title">Danger Zone</h2>
+        <div class="setup-card danger-card">
+          <p class="setup-note">Reset all courts and match data. This cannot be undone.</p>
+          <button class="btn-danger" onclick="resetAll()">Reset All Data</button>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ── External libs ─────────────────────────────────────────── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- ── App modules ───────────────────────────────────────────── -->
+  <script src="src/js/state.js"></script>
+  <script src="src/js/firebase-sync.js"></script>
+  <script src="src/js/scoring-agent.js"></script>
+  <script src="src/js/tally-agent.js"></script>
+  <script src="src/js/export.js"></script>
+  <script src="src/js/ui.js"></script>
+  <script src="src/js/app.js"></script>
+
+</body>
+</html>
