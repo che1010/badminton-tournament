@@ -732,6 +732,79 @@ a:hover { text-decoration: underline; }
 .firebase-help strong { color: var(--text-2); }
 .firebase-help a { color: var(--brand); }
 
+/* ── Doubles player positions ────────────────────────────────── */
+.doubles-players {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+.player-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+.player-chip::after {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.player-chip.right::after  { content: 'R'; color: var(--brand); }
+.player-chip.left::after   { content: 'L'; color: var(--text-3); }
+.player-chip.serving {
+  background: rgba(200,240,74,0.1);
+  border-color: rgba(200,240,74,0.4);
+  color: var(--text-1);
+}
+.player-divider { color: var(--text-3); font-size: 0.72rem; }
+
+.serving-box {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(200,240,74,0.05);
+  border: 1px solid rgba(200,240,74,0.18);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  margin: 10px 0 4px;
+  font-size: 0.82rem;
+}
+.serving-dot-sm {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.serving-player-name { color: var(--brand); font-weight: 600; }
+.serving-label { color: var(--text-2); }
+.serving-side-badge {
+  padding: 1px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.serving-side-badge.right { background: rgba(200,240,74,0.14); color: var(--brand); }
+.serving-side-badge.left  { background: rgba(96,165,250,0.14); color: var(--blue); }
+
+.doubles-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 12px 0 6px;
+}
+
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--surface-1); }

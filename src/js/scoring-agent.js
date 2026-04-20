@@ -84,21 +84,34 @@ const ScoringAgent = (() => {
     // Snapshot for undo
     court.history = court.history || [];
     court.history.push(JSON.parse(JSON.stringify({
-      games:       court.games,
-      currentGame: court.currentGame,
-      gamesWonA:   court.gamesWonA,
-      gamesWonB:   court.gamesWonB,
-      serving:     court.serving,
-      complete:    court.complete,
-      winner:      court.winner,
-      status:      court.status
+      games:              court.games,
+      currentGame:        court.currentGame,
+      gamesWonA:          court.gamesWonA,
+      gamesWonB:          court.gamesWonB,
+      serving:            court.serving,
+      complete:           court.complete,
+      winner:             court.winner,
+      status:             court.status,
+      teamA_rightPlayer:  court.teamA_rightPlayer,
+      teamB_rightPlayer:  court.teamB_rightPlayer,
+      servingPlayer:      court.servingPlayer,
+      servingPlayerSide:  court.servingPlayerSide
     })));
+
+    const prevServing = court.serving;
+    const prevGame    = court.currentGame;
 
     // Apply point
     court.games[court.currentGame][team === 'A' ? 'a' : 'b']++;
     court.serving = team; // rally point: scorer serves next
 
     evaluateGame(court);
+
+    // Update doubles serving positions
+    if (court.format === 'Doubles') {
+      ServingAgent.update(court, prevServing, team, prevGame);
+      ServingAgent.fetchServingCommentary(court);
+    }
 
     const g = court.games[Math.min(court.currentGame, court.games.length - 1)];
     State.addLog(

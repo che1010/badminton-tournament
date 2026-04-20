@@ -73,6 +73,44 @@ const UI = (() => {
     const aLead = g.a > g.b, bLead = g.b > g.a;
     const isAlert = c.status && (c.status.includes('Deuce') || c.status.includes('Setting'));
 
+    // Doubles: player position rows
+    let doublesRowA = '', doublesRowB = '', servingBox = '';
+    if (c.format === 'Doubles') {
+      const aRight = c.teamA_rightPlayer === 'p1' ? c.teamA_p1 : c.teamA_p2;
+      const aLeft  = c.teamA_rightPlayer === 'p1' ? c.teamA_p2 : c.teamA_p1;
+      const bRight = c.teamB_rightPlayer === 'p1' ? c.teamB_p1 : c.teamB_p2;
+      const bLeft  = c.teamB_rightPlayer === 'p1' ? c.teamB_p2 : c.teamB_p1;
+
+      const aRightServing = c.servingPlayer === aRight && c.serving === 'A';
+      const aLeftServing  = c.servingPlayer === aLeft  && c.serving === 'A';
+      const bRightServing = c.servingPlayer === bRight && c.serving === 'B';
+      const bLeftServing  = c.servingPlayer === bLeft  && c.serving === 'B';
+
+      doublesRowA = `
+        <div class="doubles-players">
+          <span class="player-chip right${aRightServing ? ' serving' : ''}">${escHtml(aRight || 'P1')}</span>
+          <span class="player-divider">/</span>
+          <span class="player-chip left${aLeftServing ? ' serving' : ''}">${escHtml(aLeft || 'P2')}</span>
+        </div>`;
+
+      doublesRowB = `
+        <div class="doubles-players" style="justify-content:flex-end;">
+          <span class="player-chip right${bRightServing ? ' serving' : ''}">${escHtml(bRight || 'P1')}</span>
+          <span class="player-divider">/</span>
+          <span class="player-chip left${bLeftServing ? ' serving' : ''}">${escHtml(bLeft || 'P2')}</span>
+        </div>`;
+
+      if (c.servingPlayer) {
+        servingBox = `
+          <div class="serving-box">
+            <span class="serving-dot-sm"></span>
+            <span class="serving-player-name">${escHtml(c.servingPlayer)}</span>
+            <span class="serving-label">serving from</span>
+            <span class="serving-side-badge ${c.servingPlayerSide}">${(c.servingPlayerSide || '').toUpperCase()} court</span>
+          </div>`;
+      }
+    }
+
     return `
       <div class="court-card">
         <div class="card-header">
@@ -85,6 +123,7 @@ const UI = (() => {
               ${escHtml(c.teamA)}
               ${c.serving === 'A' ? '<span class="serving-indicator"></span>' : ''}
             </div>
+            ${doublesRowA}
             <div class="prev-game-scores">${prevA}</div>
           </div>
           <div class="vs-divider">G${c.currentGame + 1}</div>
@@ -93,9 +132,12 @@ const UI = (() => {
               ${c.serving === 'B' ? '<span class="serving-indicator"></span>' : ''}
               ${escHtml(c.teamB)}
             </div>
+            ${doublesRowB}
             <div class="prev-game-scores" style="justify-content:flex-end;">${prevB}</div>
           </div>
         </div>
+
+        ${servingBox}
 
         <div class="score-strip">
           <div class="score-side">

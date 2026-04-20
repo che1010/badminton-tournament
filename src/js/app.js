@@ -18,15 +18,16 @@ function switchTab(name) {
 
 // ── Add court ─────────────────────────────────────────────────────
 function addCourt() {
-  const nameEl   = document.getElementById('court-name');
-  const fmtEl    = document.getElementById('court-format');
-  const teamAEl  = document.getElementById('team-a');
-  const teamBEl  = document.getElementById('team-b');
+  const nameEl  = document.getElementById('court-name');
+  const fmtEl   = document.getElementById('court-format');
+  const teamAEl = document.getElementById('team-a');
+  const teamBEl = document.getElementById('team-b');
 
-  const name  = (nameEl.value.trim())  || `Court ${State.courts.length + 1}`;
-  const fmt   = fmtEl.value;
-  const teamA = (teamAEl.value.trim()) || 'Team A';
-  const teamB = (teamBEl.value.trim()) || 'Team B';
+  const fmt       = fmtEl.value;
+  const isDoubles = fmt === 'Doubles';
+  const name      = nameEl.value.trim() || `Court ${State.courts.length + 1}`;
+  const teamA     = teamAEl.value.trim() || (isDoubles ? 'Team A' : 'Player A');
+  const teamB     = teamBEl.value.trim() || (isDoubles ? 'Team B' : 'Player B');
 
   if (teamA === teamB) {
     alert('Team A and Team B must have different names.');
@@ -53,6 +54,14 @@ function addCourt() {
     agentNote:   ''
   };
 
+  if (isDoubles) {
+    court.teamA_p1 = document.getElementById('team-a-p1').value.trim() || 'A-P1';
+    court.teamA_p2 = document.getElementById('team-a-p2').value.trim() || 'A-P2';
+    court.teamB_p1 = document.getElementById('team-b-p1').value.trim() || 'B-P1';
+    court.teamB_p2 = document.getElementById('team-b-p2').value.trim() || 'B-P2';
+    ServingAgent.initCourt(court);
+  }
+
   State.addCourt(court);
   State.addLog('scoring', `SCORING/${name}`, `Match created: ${teamA} vs ${teamB} (${fmt})`);
   State.save();
@@ -61,10 +70,22 @@ function addCourt() {
 
   // Clear form
   [nameEl, teamAEl, teamBEl].forEach(el => { el.value = ''; });
+  ['team-a-p1', 'team-a-p2', 'team-b-p1', 'team-b-p2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
 
   UI.renderCourts();
   UI.renderLog();
   switchTab('courts');
+}
+
+// ── Format toggle ──────────────────────────────────────────────────
+function onFormatChange(value) {
+  const isDoubles = value === 'Doubles';
+  document.getElementById('doubles-fields').style.display = isDoubles ? 'block' : 'none';
+  document.getElementById('label-team-a').textContent = isDoubles ? 'Team A name' : 'Player A';
+  document.getElementById('label-team-b').textContent = isDoubles ? 'Team B name' : 'Player B';
 }
 
 // ── Clear log ─────────────────────────────────────────────────────
@@ -109,7 +130,7 @@ document.addEventListener('keydown', e => {
   UI.renderLog();
 
   // Allow Enter key on setup form inputs
-  ['court-name', 'team-a', 'team-b'].forEach(id => {
+  ['court-name', 'team-a', 'team-b', 'team-a-p1', 'team-a-p2', 'team-b-p1', 'team-b-p2'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') addCourt(); });
   });
