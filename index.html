@@ -171,7 +171,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">Format</label>
-              <select class="form-input" id="court-format">
+              <select class="form-input" id="court-format" onchange="onFormatChange(this.value)">
                 <option value="Singles">Singles</option>
                 <option value="Doubles">Doubles</option>
               </select>
@@ -179,14 +179,41 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Team A / Player A</label>
+              <label class="form-label" id="label-team-a">Player A</label>
               <input class="form-input" id="team-a" placeholder="Name" />
             </div>
             <div class="form-group">
-              <label class="form-label">Team B / Player B</label>
+              <label class="form-label" id="label-team-b">Player B</label>
               <input class="form-input" id="team-b" placeholder="Name" />
             </div>
           </div>
+
+          <!-- Doubles player fields (hidden until Doubles is selected) -->
+          <div id="doubles-fields" style="display:none;">
+            <div class="doubles-section-label">Team A Players</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Player 1 <span class="optional-badge">starts right</span></label>
+                <input class="form-input" id="team-a-p1" placeholder="Player 1 name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Player 2</label>
+                <input class="form-input" id="team-a-p2" placeholder="Player 2 name" />
+              </div>
+            </div>
+            <div class="doubles-section-label">Team B Players</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Player 1 <span class="optional-badge">starts right</span></label>
+                <input class="form-input" id="team-b-p1" placeholder="Player 1 name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Player 2</label>
+                <input class="form-input" id="team-b-p2" placeholder="Player 2 name" />
+              </div>
+            </div>
+          </div>
+
           <button class="btn-primary" onclick="addCourt()">Add Court</button>
         </div>
       </section>
@@ -247,6 +274,7 @@
   <!-- ── App modules ───────────────────────────────────────────── -->
   <script src="src/js/state.js"></script>
   <script src="src/js/firebase-sync.js"></script>
+  <script src="src/js/serving-agent.js"></script>
   <script src="src/js/scoring-agent.js"></script>
   <script src="src/js/tally-agent.js"></script>
   <script src="src/js/export.js"></script>
