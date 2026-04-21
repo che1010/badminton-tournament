@@ -424,22 +424,26 @@ a:hover { text-decoration: underline; }
 }
 
 .card-footer {
-  display: flex;
-  justify-content: flex-end;
   border-top: 1px solid var(--border);
-  padding-top: 8px;
-  margin-top: 4px;
+  padding-top: 10px;
+  margin-top: 6px;
 }
-.undo-link {
-  font-size: 11px;
-  color: var(--text-3);
-  background: none;
-  border: none;
+.btn-undo {
+  width: 100%;
+  padding: 11px 16px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
-  font-family: var(--font-body);
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.08s;
+  letter-spacing: 0.01em;
 }
-.undo-link:hover { color: var(--text-2); }
+.btn-undo:hover { background: var(--surface-3); border-color: rgba(248,113,113,0.4); color: var(--red); }
+.btn-undo:active { transform: scale(0.97); }
 
 .match-winner-banner {
   background: var(--green-bg);
@@ -813,8 +817,36 @@ a:hover { text-decoration: underline; }
 
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
+  .main-content { padding: 1.25rem 0.75rem 5rem; }
+
   .view-title { font-size: 1.35rem; }
-  .score-number { font-size: 2.75rem; }
-  .court-grid { grid-template-columns: 1fr; }
+
+  .court-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  .court-card { padding: 1rem; border-radius: var(--radius-lg); }
+
+  .score-number { font-size: 3rem; min-width: 52px; }
+
+  .score-btn {
+    padding: 12px 24px;
+    font-size: 15px;
+    border-radius: var(--radius-md);
+    min-width: 100px;
+  }
+
+  .score-strip { gap: 1rem; padding: 1rem 0; }
+
+  .team-name-display { font-size: 14px; }
+
+  .btn-undo { padding: 13px 16px; font-size: 14px; }
+
   .export-btn { min-width: 100%; }
+
+  .nav-tab { padding: 0 12px; font-size: 12px; height: 44px; }
+
+  .form-group { min-width: 140px; }
+
+  .setup-card { padding: 1rem; }
+
+  .tally-bar { padding: 10px 0.75rem; }
 }

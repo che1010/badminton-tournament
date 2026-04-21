@@ -156,7 +156,7 @@ const UI = (() => {
         <div class="agent-note-display" id="note-${c.id}">${escHtml(c.agentNote || '')}</div>
 
         <div class="card-footer">
-          <button class="undo-link" onclick="ScoringAgent.undoPoint('${c.id}')">↩ undo last point</button>
+          <button class="btn-undo" onclick="ScoringAgent.undoPoint('${c.id}')">↩ Undo Last Point</button>
         </div>
       </div>`;
   }

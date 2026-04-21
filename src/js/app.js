@@ -26,8 +26,19 @@ function addCourt() {
   const fmt       = fmtEl.value;
   const isDoubles = fmt === 'Doubles';
   const name      = nameEl.value.trim() || `Court ${State.courts.length + 1}`;
-  const teamA     = teamAEl.value.trim() || (isDoubles ? 'Team A' : 'Player A');
-  const teamB     = teamBEl.value.trim() || (isDoubles ? 'Team B' : 'Player B');
+
+  let teamA, teamB;
+  if (isDoubles) {
+    const p1a = document.getElementById('team-a-p1').value.trim();
+    const p2a = document.getElementById('team-a-p2').value.trim();
+    const p1b = document.getElementById('team-b-p1').value.trim();
+    const p2b = document.getElementById('team-b-p2').value.trim();
+    teamA = (p1a && p2a) ? `${p1a} / ${p2a}` : (p1a || p2a || 'Team A');
+    teamB = (p1b && p2b) ? `${p1b} / ${p2b}` : (p1b || p2b || 'Team B');
+  } else {
+    teamA = teamAEl.value.trim() || 'Player A';
+    teamB = teamBEl.value.trim() || 'Player B';
+  }
 
   if (teamA === teamB) {
     alert('Team A and Team B must have different names.');
@@ -84,8 +95,7 @@ function addCourt() {
 function onFormatChange(value) {
   const isDoubles = value === 'Doubles';
   document.getElementById('doubles-fields').style.display = isDoubles ? 'block' : 'none';
-  document.getElementById('label-team-a').textContent = isDoubles ? 'Team A name' : 'Player A';
-  document.getElementById('label-team-b').textContent = isDoubles ? 'Team B name' : 'Player B';
+  document.getElementById('team-name-row').style.display = isDoubles ? 'none' : 'flex';
 }
 
 // ── Clear log ─────────────────────────────────────────────────────
